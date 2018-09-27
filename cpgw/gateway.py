@@ -8,6 +8,7 @@ import re
 import logging
 import serial
 import decimal
+from threading import Condition, Lock, Thread, Event
 
 context_prec1 = decimal.Context(prec=1)
 context_prec2 = decimal.Context(prec=2)
@@ -38,8 +39,11 @@ class Gateway:
         self.on_line = None
         self.on_recv = None
 
-    def run(self):
+        self._command = Lock()
+        self._event = Event()
+        self._response = None
 
+    def run(self):
         self._ser = serial.Serial(self._device, baudrate=115200, timeout=3)
         time.sleep(0.5)
         self._ser.flush()
@@ -58,6 +62,12 @@ class Gateway:
 
                 line = line.decode().strip()
 
+                if line[0] == '{':
+                    continue
+
+                if line[0] == '#':
+                    continue
+
                 if self.on_line:
                     self.on_line(line)
 
@@ -70,3 +80,28 @@ class Gateway:
                         payload[item[0]] = None if value == '' else item[1](value)
 
                     self.on_recv(payload)
+
+                elif self._response != None:
+                    if line == 'OK':
+                        self._event.set()
+                    elif line == 'ERROR':
+                        self._response = None
+                        self._event.set()
+                    else:
+                        self._response.append(line)
+
+    def command(self, command):
+        print("commad", command)
+        with self._command:
+            self._event.clear()
+            command = 'AT' + command + '\r\n'
+            self._response = []
+            self._ser.write(command.encode('ascii'))
+            self._event.wait()
+            response = self._response
+            self._response = None
+            return response
+
+    def start(self):
+        """Run in thread"""
+        Thread(target=self.run, args=[]).start()

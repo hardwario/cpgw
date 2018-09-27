@@ -7,9 +7,11 @@ import time
 import click
 import click_log
 import logging
-import paho.mqtt.client
 import simplejson as json
+import zmq
 from cpgw.gateway import Gateway
+from cpgw.request_worker import RequestWorker
+
 
 logger = logging.getLogger()
 handler = click_log.ClickHandler()
@@ -19,22 +21,23 @@ logger.addHandler(handler)
 
 @click.command()
 @click.option('--device', '-d', type=str, help='Device path.', required=True)
-@click.option('--mqtt-host', help='MQTT host to connect to (default is localhost)', default="localhost", type=str)
-@click.option('--mqtt-port', help='MQTT port to connect to (default is 1883)', default=1883, type=int)
+@click.option('--port', '-p', type=int, help='Port', required=True)
 @click_log.simple_verbosity_option(logger, default='INFO')
-def run(device, mqtt_host, mqtt_port):
-    mqttc = paho.mqtt.client.Client()
-    mqttc.connect_async(mqtt_host, mqtt_port, keepalive=10)
-    mqttc.loop_start()
+def run(device, port):
+
+    context = zmq.Context()
+    socket = context.socket(zmq.PUB)
+    socket.bind("tcp://*:%s" % port)
 
     def on_recv(payload):
-        logger.info(payload)
-        topic = "node/%s/recv" % payload['id']
-        del payload['id']
-        mqttc.publish(topic, json.dumps(payload, use_decimal=True), qos=1)
+        logger.debug("recv %s", payload)
+        socket.send_json(payload)
 
     gw = Gateway(device)
     gw.on_recv = on_recv
+
+    RequestWorker('0.0.0.0', port + 1, gw).start()
+
     gw.run()
 
 
