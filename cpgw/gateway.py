@@ -14,7 +14,7 @@ context_prec2 = decimal.Context(prec=2)
 
 items = (
     ("rssi", int),
-    ("id", int),
+    ("id", str),
     ("sequence", int),
     ("altitude", int),
     ("co2-conc", int),

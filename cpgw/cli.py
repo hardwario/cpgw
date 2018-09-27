@@ -29,7 +29,9 @@ def run(device, mqtt_host, mqtt_port):
 
     def on_recv(payload):
         logger.info(payload)
-        mqttc.publish("node/%d/recv" % payload['id'], json.dumps(payload, use_decimal=True), qos=1)
+        topic = "node/%s/recv" % payload['id']
+        del payload['id']
+        mqttc.publish(topic, json.dumps(payload, use_decimal=True), qos=1)
 
     gw = Gateway(device)
     gw.on_recv = on_recv
