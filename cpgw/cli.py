@@ -30,9 +30,13 @@ def run(config_file, test):
 
     logging.info("Process started")
 
+    addr ="tcp://%s:%d" % (config['zmq']['publisher']['host'], config['zmq']['publisher']['port'])
+
+    logging.info("Publisher binding on %s", addr)
     context = zmq.Context()
     socket = context.socket(zmq.PUB)
-    socket.bind("tcp://%s:%d" % (config['zmq']['publisher']['host'], config['zmq']['publisher']['port']))
+    socket.bind(addr)
+    logging.info("Success bind on %s", addr)
 
     gw = Gateway(config['device'])
     gateway_id = gw.command("+CGSN")[0].split(':')[1].strip()

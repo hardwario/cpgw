@@ -1,4 +1,5 @@
 import zmq
+import logging
 from threading import Thread
 
 class RequestWorker(Thread):
@@ -6,9 +7,12 @@ class RequestWorker(Thread):
     def __init__(self, host, port, gw):
         Thread.__init__(self)
         self.daemon = True
+        addr = "tcp://%s:%s" % (host, port)
+        logging.info("Publisher binding on %s", addr)
         context = zmq.Context()
         self._socket = context.socket(zmq.REP)
-        self._socket.bind("tcp://%s:%s" % (host, port))
+        self._socket.bind(addr)
+        logging.info("Success bind on %s", addr)
         self._gw = gw
         self.__run = True
 

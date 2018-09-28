@@ -9,6 +9,11 @@ import logging
 import serial
 import decimal
 from threading import Condition, Lock, Thread, Event
+try:
+    import fcntl
+except ImportError:
+    fcntl = None
+
 
 context_prec1 = decimal.Context(prec=1)
 context_prec2 = decimal.Context(prec=2)
@@ -43,7 +48,17 @@ class Gateway:
         self._event = Event()
         self._response = None
 
+        logging.info("Connecting on device %s", self._device)
         self._ser = serial.Serial(self._device, baudrate=115200, timeout=3)
+
+        if fcntl and self._ser:
+            try:
+                fcntl.flock(self._ser.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except Exception as e:
+                raise Exception('Could not lock device %s' % self._device)
+
+        logging.info("Success connect on device %s", self._device)
+
         time.sleep(0.5)
         self._ser.flush()
         self._ser.reset_input_buffer()
@@ -59,12 +74,13 @@ class Gateway:
     def _loop(self):
         try:
             line = self._ser.readline()
-        except serial.SerialException:
+        except serial.SerialException as e:
+            logging.error("SerialException %s", e)
             self._ser.close()
             raise
 
         if line:
-            logging.debug("readline %s", line)
+            logging.debug("Read line %s", line)
 
             line = line.decode().strip()
 
@@ -98,7 +114,7 @@ class Gateway:
 
     def command(self, command):
         with self._command:
-            logging.debug("command %s", command)
+            logging.debug("Command %s", command)
             self._event.clear()
             command = 'AT' + command + '\r\n'
             self._response = []
