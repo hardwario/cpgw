@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='cpgw',
     packages=['cpgw'],
-    version='1.1.0',
+    version='1.3.0',
     description='Cooper Gateway',
     url='https://github.com/blavka/cpgw',
     author='Karel Blavka',
@@ -21,7 +21,7 @@ setup(
         'Intended Audience :: Science/Research'
     ],
     install_requires=[
-        'Click>=6.0', 'click-log>=0.2.1', 'pyserial==3.4', 'paho-mqtt>=1.0', 'simplejson>=3.6.0'
+        'Click>=6.0', 'click-log>=0.2.1', 'pyserial==3.4', 'paho-mqtt>=1.0', 'simplejson>=3.6.0', 'pyzmq', 'schema'
     ],
     entry_points='''
         [console_scripts]

@@ -64,7 +64,7 @@ class Gateway:
             raise
 
         if line:
-            logging.debug("read %s", line)
+            logging.debug("readline %s", line)
 
             line = line.decode().strip()
 
@@ -97,8 +97,8 @@ class Gateway:
                     self._response.append(line)
 
     def command(self, command):
-        print("commad", command)
         with self._command:
+            logging.debug("command %s", command)
             self._event.clear()
             command = 'AT' + command + '\r\n'
             self._response = []
