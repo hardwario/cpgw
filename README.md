@@ -18,15 +18,7 @@ You can install **cpgw** directly from PyPI:
 ### As cli tool
 
 ```sh
->> cpgw --help
-Usage: cpgw [OPTIONS]
-
-Options:
-  -d, --device TEXT    Device path.  [required]
-  --mqtt-host TEXT     MQTT host to connect to (default is localhost)
-  --mqtt-port INTEGER  MQTT port to connect to (default is 1883)
-  -v, --verbosity LVL  Either CRITICAL, ERROR, WARNING, INFO or DEBUG
-  --help               Show this message and exit.
+cpgw -c config.yml
 ```
 
 ### As library
