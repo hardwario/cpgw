@@ -43,52 +43,58 @@ class Gateway:
         self._event = Event()
         self._response = None
 
-    def run(self):
         self._ser = serial.Serial(self._device, baudrate=115200, timeout=3)
         time.sleep(0.5)
         self._ser.flush()
         self._ser.reset_input_buffer()
         self._ser.reset_output_buffer()
 
-        while True:
-            try:
-                line = self._ser.readline()
-            except serial.SerialException:
-                self._ser.close()
-                raise
+        self.is_run = False
 
-            if line:
-                logging.debug("read %s", line)
+    def run(self):
+        self.is_run = True
+        while self.is_run:
+            self._loop()
 
-                line = line.decode().strip()
+    def _loop(self):
+        try:
+            line = self._ser.readline()
+        except serial.SerialException:
+            self._ser.close()
+            raise
 
-                if line[0] == '{':
-                    continue
+        if line:
+            logging.debug("read %s", line)
 
-                if line[0] == '#':
-                    continue
+            line = line.decode().strip()
 
-                if self.on_line:
-                    self.on_line(line)
+            if line[0] == '{':
+                return
 
-                if self.on_recv and line.startswith("$RECV:"):
-                    payload = {}
-                    values = line[7:].split(',')
+            if line[0] == '#':
+                return
 
-                    for i, item in enumerate(items):
-                        value = values[i]
-                        payload[item[0]] = None if value == '' else item[1](value)
+            if self.on_line:
+                self.on_line(line)
 
-                    self.on_recv(payload)
+            if self.on_recv and line.startswith("$RECV:"):
+                payload = {}
+                values = line[7:].split(',')
 
-                elif self._response != None:
-                    if line == 'OK':
-                        self._event.set()
-                    elif line == 'ERROR':
-                        self._response = None
-                        self._event.set()
-                    else:
-                        self._response.append(line)
+                for i, item in enumerate(items):
+                    value = values[i]
+                    payload[item[0]] = None if value == '' else item[1](value)
+
+                self.on_recv(payload)
+
+            elif self._response != None:
+                if line == 'OK':
+                    self._event.set()
+                elif line == 'ERROR':
+                    self._response = None
+                    self._event.set()
+                else:
+                    self._response.append(line)
 
     def command(self, command):
         print("commad", command)
@@ -97,7 +103,11 @@ class Gateway:
             command = 'AT' + command + '\r\n'
             self._response = []
             self._ser.write(command.encode('ascii'))
-            self._event.wait()
+            if self.is_run:
+                self._event.wait()
+            else:
+                while not self._event.is_set():
+                    self._loop()
             response = self._response
             self._response = None
             return response

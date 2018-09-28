@@ -29,14 +29,19 @@ def run(device, port):
     socket = context.socket(zmq.PUB)
     socket.bind("tcp://*:%s" % port)
 
+    gw = Gateway(device)
+    gateway_id = gw.command("+CGSN")[0].split(':')[1].strip()
+
+    rw = RequestWorker('0.0.0.0', port + 1, gw)
+
     def on_recv(payload):
         logger.debug("recv %s", payload)
+        payload['gw'] = gateway_id
         socket.send_json(payload)
 
-    gw = Gateway(device)
     gw.on_recv = on_recv
 
-    RequestWorker('0.0.0.0', port + 1, gw).start()
+    rw.start()
 
     gw.run()
 
