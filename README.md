@@ -1,5 +1,9 @@
 # Cooper Control Tool
 
+[![Travis](https://img.shields.io/travis/hardwario/cpgw/master.svg)](https://travis-ci.org/hardwario/cpgw)
+[![Release](https://img.shields.io/github/release/hardwario/cpgw.svg)](https://github.com/hardwario/cpgw/releases)
+[![License](https://img.shields.io/github/license/hardwario/cpgw.svg)](https://github.com/hardwario/cpgw/blob/master/LICENSE)
+
 This is the Gateway tool for cooper dongle
 
 ## Installing
