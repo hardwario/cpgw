@@ -3,11 +3,11 @@ from setuptools import setup
 setup(
     name='cpgw',
     packages=['cpgw'],
-    version='1.3.0',
+    version='@@VERSION@@',
     description='Cooper Gateway',
-    url='https://github.com/blavka/cpgw',
-    author='Karel Blavka',
-    author_email='karel.blavka@hardwario.com',
+    url='https://github.com/hardwario/cpgw',
+    author='HARDWARIO s.r.o.',
+    author_email='ask@hardwario.com',
     license='MIT',
     keywords = ['cooper', 'cli', 'tool'],
     classifiers=[
@@ -25,7 +25,7 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        cpgw=cpgw.cli:main
+        cpgw=cpgw.app:main
     '''
 )
 
