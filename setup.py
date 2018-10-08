@@ -21,7 +21,7 @@ setup(
         'Intended Audience :: Science/Research'
     ],
     install_requires=[
-        'Click>=6.0', 'click-log>=0.2.1', 'pyserial==3.4', 'paho-mqtt>=1.0', 'simplejson>=3.6.0', 'pyzmq', 'schema'
+        'Click>=6.0', 'click-log>=0.2.1', 'pyserial==3.4', 'simplejson>=3.6.0', 'pyzmq>=17.1', 'schema>=0.6', 'PyYAML>=3.13'
     ],
     entry_points='''
         [console_scripts]
