@@ -30,7 +30,7 @@ def run(config_file, test):
 
     logging.info("Process started")
 
-    addr ="tcp://%s:%d" % (config['zmq']['publisher']['host'], config['zmq']['publisher']['port'])
+    addr = "tcp://%s:%d" % (config['zmq']['publisher']['host'], config['zmq']['publisher']['port'])
 
     logging.info("Publisher binding on %s", addr)
     context = zmq.Context()

@@ -2,6 +2,7 @@ import zmq
 import logging
 from threading import Thread
 
+
 class RequestWorker(Thread):
 
     def __init__(self, host, port, gw):

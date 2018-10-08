@@ -103,7 +103,7 @@ class Gateway:
 
                 self.on_recv(payload)
 
-            elif self._response != None:
+            elif self._response is not None:
                 if line == 'OK':
                     self._event.set()
                 elif line == 'ERROR':
