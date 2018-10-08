@@ -13,6 +13,7 @@ from cpgw.gateway import Gateway
 from cpgw.request_worker import RequestWorker
 from cpgw.config import load_config
 
+__version__ = '@@VERSION@@'
 logging.basicConfig(format='%(asctime)s %(message)s')
 
 
@@ -20,6 +21,7 @@ logging.basicConfig(format='%(asctime)s %(message)s')
 @click.option('--config', '-c', 'config_file', type=click.File('r'), required=True, help='Configuration file.')
 @click.option('--test', is_flag=True, help='Configuration file.')
 @click_log.simple_verbosity_option(default='INFO')
+@click.version_option(version=__version__)
 def run(config_file, test):
 
     config = load_config(config_file)
