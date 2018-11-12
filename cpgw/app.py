@@ -41,7 +41,8 @@ def run(config_file, test):
     logging.info("Success bind on %s", addr)
 
     gw = Gateway(config['device'])
-    gateway_id = gw.command("+CGSN")[0].split(':')[1].strip()
+    gateway_serial = gw.get_cgsn()
+    logging.info("GW: %s", gateway_serial)
 
     if 'dispatcher' in config['zmq']:
         rw = RequestWorker(config['zmq']['dispatcher']['host'], config['zmq']['dispatcher']['port'], gw)
@@ -49,7 +50,7 @@ def run(config_file, test):
     def on_recv(payload):
         logging.info('Message from %s', payload['id'])
         logging.debug("payload %s", payload)
-        payload['gw'] = gateway_id
+        payload['gw'] = gateway_serial
         socket.send_json(payload)
 
     gw.on_recv = on_recv
@@ -66,7 +67,7 @@ def main():
     except KeyboardInterrupt:
         pass
     except Exception as e:
-        click.echo(str(e), err=True)
+        logging.error(e)
         sys.exit(1)
 
 

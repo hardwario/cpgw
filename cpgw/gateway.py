@@ -59,10 +59,10 @@ class Gateway:
 
         logging.info("Success connect on device %s", self._device)
 
-        time.sleep(0.5)
         self._ser.flush()
         self._ser.reset_input_buffer()
         self._ser.reset_output_buffer()
+        time.sleep(0.5)
 
         self.is_run = False
 
@@ -127,6 +127,12 @@ class Gateway:
             response = self._response
             self._response = None
             return response
+
+    def get_cgsn(self):
+        response = self.command("+CGSN")
+        if not response:
+            raise Exception("Command AT+CGSN not work.")
+        return response[0].split(':')[1].strip()
 
     def start(self):
         """Run in thread"""
