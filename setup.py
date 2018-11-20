@@ -1,4 +1,13 @@
 from setuptools import setup
+from os import path
+
+this_directory = path.abspath(path.dirname(__file__))
+
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
+
+with open('requirements.txt', 'r') as f:
+    requirements = f.read()
 
 setup(
     name='cpgw',
@@ -20,12 +29,11 @@ setup(
         'Environment :: Console',
         'Intended Audience :: Science/Research'
     ],
-    install_requires=[
-        'Click>=6.0', 'click-log>=0.2.1', 'pyserial==3.4', 'simplejson>=3.6.0', 'pyzmq>=17.1', 'schema>=0.6', 'PyYAML>=3.13'
-    ],
+    install_requires=requirements,
     entry_points='''
         [console_scripts]
         cpgw=cpgw.app:main
-    '''
+    ''',
+    long_description=long_description,
+    long_description_content_type='text/markdown'
 )
-
