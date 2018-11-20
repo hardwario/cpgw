@@ -46,9 +46,14 @@ unset PYTHONHOME
 if [ -z "${TRAVIS_BUILD_DIR:-}" ]; then
     BUILD_DIR="$(pwd)/build"
     echo "$BUILD_DIR"
+    rm -rf "$BUILD_DIR"
     mkdir -p "$BUILD_DIR"
     cp -r cpgw "$BUILD_DIR"/cpgw
     cp setup.py "$BUILD_DIR"/
+    cp MANIFEST.in "$BUILD_DIR"/
+    cp README.md "$BUILD_DIR"/
+    cp LICENSE "$BUILD_DIR"/
+    cp requirements.txt "$BUILD_DIR"/
     cd "$BUILD_DIR"
 fi
 
