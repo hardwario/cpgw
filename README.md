@@ -3,6 +3,8 @@
 [![Travis](https://img.shields.io/travis/hardwario/cpgw/master.svg)](https://travis-ci.org/hardwario/cpgw)
 [![Release](https://img.shields.io/github/release/hardwario/cpgw.svg)](https://github.com/hardwario/cpgw/releases)
 [![License](https://img.shields.io/github/license/hardwario/cpgw.svg)](https://github.com/hardwario/cpgw/blob/master/LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/cpgw.svg)](https://pypi.org/project/cpgw/)
+
 
 This is the Gateway tool for cooper dongle
 
