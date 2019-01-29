@@ -151,7 +151,7 @@ class Gateway:
         Thread(target=self.run, args=[]).start()
 
     def _lock(self):
-        if fcntl or not self._ser:
+        if not fcntl or not self._ser:
             return
         try:
             fcntl.flock(self._ser.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
