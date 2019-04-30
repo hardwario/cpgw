@@ -20,7 +20,38 @@ except ImportError:
 context_prec1 = decimal.Context(prec=1)
 context_prec2 = decimal.Context(prec=2)
 
-items = (
+recv_start = (
+    ("rssi", int),
+    ("id", str),
+    ("header", int),
+    ("sequence", int),
+    ("uptime", int),
+)
+
+recv_type_lut = {
+    1: {'type': 'beacon',
+        'items': (
+            ("altitude", int),
+            ("co2_conc", int),
+            ("humidity", lambda x: decimal.Decimal(x, context_prec1)),
+            ("illuminance", int),
+            ("motion_count", int),
+            ("orientation", int),
+            ("press_count", int),
+            ("pressure", int),
+            ("sound_level", int),
+            ("temperature", float),
+            ("voc_conc", int),
+            ("voltage", float)
+        )},
+    2: {'type': 'sound',
+        'items': (
+            ("min", int),
+            ("max", int),
+        )}
+}
+
+items_v1_0_x = (
     ("rssi", int),
     ("id", str),
     ("sequence", int),
@@ -47,7 +78,7 @@ class Gateway:
         self.on_line = None
         self.on_recv = None
 
-        self._command = Lock()
+        self._command_mutex = Lock()
         self._event = Event()
         self._response = None
 
@@ -66,6 +97,13 @@ class Gateway:
         self._ser.write(b'\x1b')
 
         self.is_run = False
+
+        self._command('')
+
+        cgmr = self.get_cgmr()
+        self._old_recv = cgmr.startswith("1.0.") or cgmr.startswith("v1.0.")
+
+        logging.info("FW: %s", self.command('I')[0])
 
     def __del__(self):
         self._unlock()
@@ -106,9 +144,23 @@ class Gateway:
                 payload = {}
                 values = line[7:].split(',')
 
-                for i, item in enumerate(items):
-                    value = values[i]
-                    payload[item[0]] = None if value == '' else item[1](value)
+                if self._old_recv:
+                    for i, item in enumerate(items_v1_0_x):
+                        value = values[i]
+                        payload[item[0]] = None if value == '' else item[1](value)
+                else:
+                    for i, item in enumerate(recv_start):
+                        value = values[i]
+                        payload[item[0]] = None if value == '' else item[1](value)
+
+                    recv_type = recv_type_lut.get(payload['header'], None)
+
+                    if recv_type:
+                        del payload['header']
+                        payload['type'] = recv_type['type']
+                        for i, item in enumerate(recv_type['items']):
+                            value = values[i + 5]
+                            payload[item[0]] = None if value == '' else item[1](value)
 
                 self.on_recv(payload)
 
@@ -121,9 +173,9 @@ class Gateway:
                 else:
                     self._response.append(line)
 
-    def command(self, command):
-        with self._command:
-            logging.debug("Command %s", command)
+    def _command(self, command):
+        with self._command_mutex:
+            logging.debug("Command AT%s", command)
             self._event.clear()
             command = 'AT' + command + '\r\n'
             self._response = []
@@ -137,14 +189,22 @@ class Gateway:
             self._response = None
             return response
 
-    def get_cgsn(self):
-        for i in range(3):
-            response = self.command("+CGSN")
-            if not response:
+    def command(self, command, repeat=3):
+        for i in range(repeat):
+            response = self._command(command)
+            if response is None:
                 time.sleep(0.5)
                 continue
-            return response[0].split(':')[1].strip()
-        raise Exception("Command AT+CGSN not work.")
+            return response
+        raise Exception("Command %s not work." % command)
+
+    def get_cgsn(self):
+        response = self.command("+CGSN")
+        return response[0].split(':')[1].strip()
+
+    def get_cgmr(self):
+        response = self.command("+CGMR")
+        return response[0].split(':')[1].strip()
 
     def start(self):
         """Run in thread"""
