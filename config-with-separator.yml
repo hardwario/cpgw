@@ -1,0 +1,9 @@
+device: /dev/ttyUSB0
+separator: '-'
+zmq:
+  publisher:
+    host: 127.0.0.1
+    port: 5680
+  dispatcher:
+    host: 127.0.0.1
+    port: 5681

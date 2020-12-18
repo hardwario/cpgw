@@ -13,6 +13,7 @@ def port_range(port):
 
 schema = Schema({
     'device': And(str, len),
+    Optional('separator'): And(str, len),
     'zmq': {
         'publisher': {
             'host': And(str, len),

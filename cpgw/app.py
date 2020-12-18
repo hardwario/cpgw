@@ -40,7 +40,7 @@ def run(config_file, test):
     socket.bind(addr)
     logging.info("Success bind on %s", addr)
 
-    gw = Gateway(config['device'])
+    gw = Gateway(config['device'], config.get('separator', '_'))
     gateway_serial = gw.get_cgsn()
     logging.info("GW: %s", gateway_serial)
 

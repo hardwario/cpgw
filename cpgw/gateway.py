@@ -72,7 +72,7 @@ items_v1_0_x = (
 
 class Gateway:
 
-    def __init__(self, device):
+    def __init__(self, device, separator):
         self._ser = None
         self._device = device
         self.on_line = None
@@ -104,6 +104,18 @@ class Gateway:
         self._old_recv = cgmr.startswith("1.0.") or cgmr.startswith("v1.0.")
 
         logging.info("FW: %s", self.command('I')[0])
+
+        self._recv_type_lut = {}
+        for header in recv_type_lut:
+            items = []
+            for item in recv_type_lut[header]['items']:
+                items.append((item[0].replace('_', separator), item[1]))
+            self._recv_type_lut[header] = {
+                'type': recv_type_lut[header]['type'],
+                'items': tuple(items),
+            }
+
+        print(self._recv_type_lut)
 
     def __del__(self):
         self._unlock()
@@ -153,7 +165,7 @@ class Gateway:
                         value = values[i]
                         payload[item[0]] = None if value == '' else item[1](value)
 
-                    recv_type = recv_type_lut.get(payload['header'], None)
+                    recv_type = self._recv_type_lut.get(payload['header'], None)
 
                     if recv_type:
                         del payload['header']
