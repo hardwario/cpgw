@@ -1,6 +1,6 @@
 Click>=7.0
 click-log>=0.2.1
-pyserial==3.4
+pyserial>=3.5
 simplejson>=3.6.0
 pyzmq>=17.1
 schema>=0.6
