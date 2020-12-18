@@ -115,8 +115,6 @@ class Gateway:
                 'items': tuple(items),
             }
 
-        print(self._recv_type_lut)
-
     def __del__(self):
         self._unlock()
         try:
