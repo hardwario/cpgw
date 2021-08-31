@@ -67,6 +67,7 @@ items_v1_0_x = (
     ("voltage", lambda x: decimal.Decimal(x, context_prec2))
 )
 
+
 class Gateway:
 
     def __init__(self, device, separator):
