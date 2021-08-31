@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import datetime
-import os
-import sys
-import time
-import re
-import logging
-import serial
 import decimal
+import logging
 import platform
+import time
 from ctypes import *
-from threading import Condition, Lock, Thread, Event
+from threading import Event, Lock, Thread
+
+import serial
+
 try:
     import fcntl
 except ImportError:

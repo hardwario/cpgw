@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 
-import os
-import sys
-import logging
 import yaml
-from schema import Schema, And, Or, Use, Optional, SchemaError
+from schema import And, Optional, Schema, SchemaError
 
 
 def port_range(port):

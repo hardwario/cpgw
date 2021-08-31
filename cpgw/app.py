@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import datetime
-import os
+import logging
 import sys
-import time
+
 import click
 import click_log
-import logging
-import simplejson as json
 import zmq
+
+from cpgw.config import load_config
 from cpgw.gateway import Gateway
 from cpgw.request_worker import RequestWorker
-from cpgw.config import load_config
 
 __version__ = '@@VERSION@@'
 logging.basicConfig(format='%(asctime)s %(message)s')
