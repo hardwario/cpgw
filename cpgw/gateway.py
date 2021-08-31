@@ -38,9 +38,9 @@ recv_type_lut = {
             ("press_count", int),
             ("pressure", int),
             ("sound_level", int),
-            ("temperature", float),
+            ("temperature", lambda x: decimal.Decimal(x, context_prec2)),
             ("voc_conc", int),
-            ("voltage", float)
+            ("voltage", lambda x: decimal.Decimal(x, context_prec2))
         )},
     2: {'type': 'sound',
         'items': (
@@ -62,11 +62,10 @@ items_v1_0_x = (
     ("press-count", int),
     ("pressure", int),
     ("sound-level", int),
-    ("temperature", float),
+    ("temperature", lambda x: decimal.Decimal(x, context_prec2)),
     ("voc-conc", int),
-    ("voltage", float)
+    ("voltage", lambda x: decimal.Decimal(x, context_prec2))
 )
-
 
 class Gateway:
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import json
 import logging
 import sys
 
@@ -49,7 +50,9 @@ def run(config_file, test):
         logging.info('Message from %s', payload['id'])
         logging.debug("payload %s", payload)
         payload['gw'] = gateway_serial
-        socket.send_json(payload)
+
+        payload = json.dumps(payload, use_decimal=True)
+        socket.send(payload)
 
     gw.on_recv = on_recv
 
