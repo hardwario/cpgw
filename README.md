@@ -1,4 +1,4 @@
-# Cooper Control Tool
+# COOPER Control Tool
 
 [![Travis](https://img.shields.io/travis/hardwario/cpgw/master.svg)](https://travis-ci.org/hardwario/cpgw)
 [![Release](https://img.shields.io/github/release/hardwario/cpgw.svg)](https://github.com/hardwario/cpgw/releases)
@@ -8,7 +8,8 @@
 
 This is the Gateway tool for cooper dongle
 
-## Installing
+
+## Installation
 
 You can install **cpgw** directly from PyPI:
 
@@ -19,7 +20,8 @@ sudo pip3 install -U cpgw
 
 > Note: You may need to use `sudo` before the command - it depends on the operating system used...
 
-## Config
+
+## Configuration
 
 Insert this snippet to the file /etc/cooper/cpgw.yml:
 ```
@@ -33,17 +35,17 @@ zmq:
     port: 5681
 ```
 
-## Usage
 
-### As cli tool
+## Usage
 
 ```sh
 cpgw -c /etc/cooper/cpgw.yml
 ```
 
-### Systemd
 
-Insert this snippet to the file /lib/systemd/system/cpgw.service:
+### Start using systemd
+
+Insert this snippet to the file `/etc/systemd/system/cpgw.service`:
 ```
 [Unit]
 Description=COOPER cpgw
@@ -74,12 +76,13 @@ View the service log:
     journalctl -u cpgw.service -f
 
 
-### PM2
+### Start using PM2
+
 ```sh
 pm2 start `which python3` --name "cpgw" -- `which cpgw` -c /etc/cooper/cpgw.yml
 ```
 
-### As library
+### Usage as Python module
 
 ```python
 from cpgw.gateway import Gateway
