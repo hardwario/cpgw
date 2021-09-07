@@ -6,6 +6,7 @@ import sys
 
 import click
 import click_log
+import simplejson as json
 import zmq
 
 from cpgw.config import load_config
@@ -52,7 +53,7 @@ def run(config_file, test):
         payload['gw'] = gateway_serial
 
         payload = json.dumps(payload, use_decimal=True)
-        socket.send(payload)
+        socket.send_string(payload)
 
     gw.on_recv = on_recv
 
